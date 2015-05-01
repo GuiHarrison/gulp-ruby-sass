@@ -8,7 +8,9 @@ function prettifyDirectoryLogging (msg, tempDir) {
 
 module.exports = {
 	verbose: function  (command, args) {
-		gutil.log('Running command ' + command + ' ' + args.join(' '));
+		gutil.log(
+			gutil.colors.blue('Running command `' + command + ' ' + args.join(' ') + '`')
+		);
 	},
 
 	stdout: function (data, tempDir, stream) {
