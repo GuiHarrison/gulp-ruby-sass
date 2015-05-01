@@ -45,7 +45,7 @@ Use [gulp-watch](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulpwatc
 
 #### Handling errors
 
-Handle Sass errors with an `on('error', cb)` listener. gulp-ruby-sass throws errors like a gulp plugin, but streams the erroring files so you can see Sass errors in your browser too.
+Handle Sass errors with an `on('error', cb)` listener. gulp-ruby-sass throws errors like a gulp plugin, but streams the erroring files so you can see Sass errors in your browser too. See the [`throwSassErrors`](#throwSassErrors) option to change this behavior.
 
 ### Plugin options
 
@@ -136,6 +136,19 @@ gulp.task('sass-site', function() {
 
 gulp.task('sass', ['sass-app', 'sass-site']);
 ```
+
+#### throwSassErrors
+
+Type: `Boolean`  
+Default: `false`  
+
+By default Sass always compiles CSS, even when there's a compilation error. The stack trace is inserted in the CSS file and is visible when loaded in the browser.
+
+Set `throwSassErrors: true` if you'd rather handle errors at the gulp level. Sass errors will be emitted on the stream, and you can catch and handle them any way you like.
+
+Can be combined with Sass's `stopOnError` option.
+
+**NOTE:** Sass reports these errors on stdout and stderr. This option will not catch Sass errors if the Sass option `quiet` is set to true. 
 
 ### Sass options
 

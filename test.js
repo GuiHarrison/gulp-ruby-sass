@@ -262,3 +262,35 @@ it('streams file on Sass error without throwing gulp error', function (done) {
 		done();
 	});
 });
+
+// TODO: Won't work as long as error and logging output are clumped together.
+// See https://github.com/sass/sass/issues/1715#issuecomment-98213569
+it.skip('throws an error on Sass error when throwSassErrors is true', function (done) {
+	this.timeout(20000);
+
+	var files = [];
+	var errorThrown = false;
+
+	sass('fixture/source', {
+		quiet: true,
+		unixNewlines: true,
+		throwSassErrors: true
+	})
+
+	.on('error', function (err) {
+		console.log(err.message);
+
+		errorThrown = true;
+	})
+
+	.on('data', function (data) {
+		files.push(data);
+	})
+
+	.on('end', function () {
+		assert.equal(files.length, 3);
+		assert(errorThrown);
+		assert.equal(getErrorFiles(files).length, 1);
+		done();
+	});
+});

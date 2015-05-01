@@ -13,7 +13,7 @@ module.exports = {
 		);
 	},
 
-	stdout: function (data, tempDir, stream) {
+	stdout: function (data, tempDir, options, stream) {
 		// Bundler error: no Sass version found
 		if (/bundler: command not found: sass/.test(data)) {
 			stream.emit('error', new gutil.PluginError(
@@ -39,7 +39,13 @@ module.exports = {
 		else if (/^\s*error/.test(data)) {
 			data = prettifyDirectoryLogging(data, tempDir);
 			data = data.trim()
-			gutil.log(gutil.colors.red(data));
+
+			if (options.throwSassErrors) {
+				stream.emit('error', new gutil.PluginError('gulp-ruby-sass', data));
+			}
+			else {
+				gutil.log(gutil.colors.red(data));
+			}
 		}
 
 		// Not an error: Sass logging
@@ -50,7 +56,7 @@ module.exports = {
 		}
 	},
 
-	stderr: function (data, tempDir, stream) {
+	stderr: function (data, tempDir, options, stream) {
 		var bundlerMissing = /Could not find 'bundler' \((.*?)\)/.exec(data)
 		var sassVersionMissing = /Could not find gem 'sass \((.*?)\) ruby'/.exec(data)
 
@@ -79,7 +85,13 @@ module.exports = {
 		else if (/^\s*Error/.test(data)) {
 			data = prettifyDirectoryLogging(data, tempDir);
 			data = data.trim()
-			gutil.log(gutil.colors.red(data));
+
+			if (options.throwSassErrors) {
+				stream.emit('error', new gutil.PluginError('gulp-ruby-sass', data));
+			}
+			else {
+				gutil.log(gutil.colors.red(data));
+			}
 		}
 
 		// Not an error: Sass warnings, debug statements

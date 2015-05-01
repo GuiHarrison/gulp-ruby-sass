@@ -25,8 +25,9 @@ module.exports = function (source, options) {
 	var cwd = process.cwd();
 	var defaults = {
 		container: 'gulp-ruby-sass',
-		verbose: false,
-		sourcemap: false
+		sourcemap: false,
+		throwSassErrors: false,
+		verbose: false
 	};
 	var command;
 	var args;
@@ -68,10 +69,11 @@ module.exports = function (source, options) {
 
 	args = dargs(options, [
 		'bundleExec',
-		'watch',
-		'poll',
 		'container',
-		'verbose'
+		'poll',
+		'throwSassErrors',
+		'verbose',
+		'watch'
 	]).concat(compileMappings);
 
 	if (options.bundleExec) {
@@ -92,11 +94,11 @@ module.exports = function (source, options) {
 	sass.stderr.setEncoding('utf8');
 
 	sass.stdout.on('data', function (data) {
-		logger.stdout(data, tempDir, stream);
+		logger.stdout(data, tempDir, options, stream);
 	});
 
 	sass.stderr.on('data', function (data) {
-		logger.stderr(data, tempDir, stream);
+		logger.stderr(data, tempDir, options, stream);
 	});
 
 	sass.on('error', function (err) {
