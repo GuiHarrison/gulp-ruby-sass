@@ -35,6 +35,13 @@ module.exports = {
 			stream.emit('error', new gutil.PluginError('gulp-ruby-sass', data.trim()));
 		}
 
+		// Sass error: compiling directory with a Sass error
+		else if (/^\s*error/.test(data)) {
+			data = prettifyDirectoryLogging(data, tempDir);
+			data = data.trim()
+			gutil.log(gutil.colors.red(data));
+		}
+
 		// Not an error: Sass logging
 		else {
 			data = prettifyDirectoryLogging(data, tempDir);
@@ -66,6 +73,13 @@ module.exports = {
 		// Sass error: file missing
 		else if (/No such file or directory @ rb_sysopen/.test(data)) {
 			stream.emit('error', new gutil.PluginError('gulp-ruby-sass', data.trim()));
+		}
+
+		// Sass error: compiling file with a Sass error
+		else if (/^\s*Error/.test(data)) {
+			data = prettifyDirectoryLogging(data, tempDir);
+			data = data.trim()
+			gutil.log(gutil.colors.red(data));
 		}
 
 		// Not an error: Sass warnings, debug statements
