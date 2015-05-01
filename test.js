@@ -236,11 +236,11 @@ it('outputs correct sourcemap paths for files and paths containing spaces', func
 	});
 });
 
-it('emits errors but streams file on Sass error', function (done) {
+it('streams file on Sass error without throwing gulp error', function (done) {
 	this.timeout(20000);
 
-	var matchErrMsg = new RegExp('File to import not found or unreadable: i-dont-exist.');
-	var errFileExists;
+	var files = [];
+	var errorThrown = false;
 
 	sass('fixture/source', {
 		quiet: true,
@@ -248,17 +248,17 @@ it('emits errors but streams file on Sass error', function (done) {
 	})
 
 	.on('error', function (err) {
-		// throws an error
-		assert(matchErrMsg.test(err.message));
+		errorThrown = true;
 	})
 
-	.on('data', function (file) {
-		// streams the erroring css file
-		errFileExists = errFileExists || matchErrMsg.test(file.contents.toString());
+	.on('data', function (data) {
+		files.push(data);
 	})
 
 	.on('end', function () {
-		assert(errFileExists);
+		assert.equal(files.length, 3);
+		assert.equal(errorThrown, false);
+		assert.equal(getErrorFiles(files).length, 1);
 		done();
 	});
 });
