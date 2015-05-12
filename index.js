@@ -66,13 +66,13 @@ module.exports = function (source, options) {
 	}
 	// TODO: implement glob file source
 
-	args = dargs(options, [
+	args = dargs(options, { excludes: [
 		'bundleExec',
 		'watch',
 		'poll',
 		'container',
 		'verbose'
-	]).concat(compileMappings);
+	]}).concat(compileMappings);
 
 	if (options.bundleExec) {
 		command = 'bundle';
